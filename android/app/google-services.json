@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "256662023792",
+    "project_id": "eko-sortify-a3356",
+    "storage_bucket": "eko-sortify-a3356.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:256662023792:android:702cb40e420c5e1a65ceb5",
+        "android_client_info": {
+          "package_name": "com.example.eko_sortify_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdFlAqWuj1HdIYPyliMovXWRSxZmJ19nM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
