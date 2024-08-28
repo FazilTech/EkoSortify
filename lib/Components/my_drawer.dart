@@ -1,77 +1,55 @@
-import 'package:eko_sortify_app/Service/authentication/login_or_register.dart';
+import 'package:eko_sortify_app/Components/my_list_tile.dart';
 import 'package:flutter/material.dart';
 
-import '../Service/authentication/auth_service.dart';
-import 'my_drawer_tile.dart';
-
 class MyDrawer extends StatelessWidget {
-  const MyDrawer({super.key});
+  final void Function()? onProfileTap;
+  final void Function()? onSignOutTap;
+  const MyDrawer({
+    super.key,
+    required this.onProfileTap,
+    required this.onSignOutTap
+    });
 
-  void logout(){
-    final auth = AuthService();
-    auth.signOut();
-  }
-  
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 100),
-            child: Image.asset(
-              "assets/images/logo.jpeg",
-                width: 150,
-            ),
-          ),
-          
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Divider(
-              color: Color.fromRGBO(59, 200, 100, 10),
-            ),
-          ),
+            Column(
+              children: [
 
-          MyDrawerTile(
-            text: "H O M E", 
-            icon: Icons.home, 
-            onTap: ()=> Navigator.pop(context),
+              DrawerHeader(
+              child: Image.asset(
+                "assets/images/logo-b.png",
+                color: Colors.white,
+                )
             ),
-          
-          const SizedBox(height: 10,),
+              
+              MyListTile(
+              icon: Icons.home, 
+              text: 'H O M E',
+              onTap: ()=> Navigator.pop(context),
+              ),
 
-          MyDrawerTile(
-            text: "S E T T I N G S", 
-            icon: Icons.settings, 
-            onTap: ()=> Navigator.pop(context),
+            MyListTile(
+              icon: Icons.person, 
+              text: 'P R O F I L E', 
+              onTap: onProfileTap
+              ),
+              ],
             ),
 
-          const SizedBox(height: 10,),
-
-          MyDrawerTile(
-            text: "S U P P O R T", 
-            icon: Icons.design_services, 
-            onTap: ()=> Navigator.pop(context),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: MyListTile(
+                icon: Icons.logout, 
+                text: 'L O G  O U T', 
+                onTap: onSignOutTap
+                ),
             ),
-
-            const SizedBox(height: 10,),
-
-          MyDrawerTile(
-            text: "A B O U T", 
-            icon: Icons.person_add, 
-            onTap: ()=> Navigator.pop(context),
-            ),
-
-          const Spacer(),
-
-          MyDrawerTile(
-            text: "L O G  O U T", 
-            icon: Icons.logout, 
-            onTap: ()=> logout()
-            ),
-
-            const SizedBox(height: 20,)
         ],
       ),
     );

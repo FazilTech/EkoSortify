@@ -4,7 +4,7 @@ import 'package:eko_sortify_app/Service/authentication/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   RegisterPage({
     super.key,
     required this.onTap
@@ -12,17 +12,32 @@ class RegisterPage extends StatelessWidget {
 
   final void Function() onTap;
 
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   void register(BuildContext context) async{
     final _auth = AuthService();
 
+    showDialog(
+        context: context, 
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        );
+
     if (_passwordController.text == _conformPasswordController.text){
+      if(mounted) Navigator.pop(context);
       try{
         _auth.signUpWithEmailAndPassword(
         _emailController.text, 
         _passwordController.text
       );
+      if(mounted)Navigator.pop(context);
       }
       catch (e){
+        if(mounted)Navigator.pop(context);
         showDialog(
           context: context, 
           builder: (context) => AlertDialog(
@@ -44,7 +59,9 @@ class RegisterPage extends StatelessWidget {
   }
 
   TextEditingController _emailController = TextEditingController();
+
   TextEditingController _passwordController = TextEditingController();
+
   TextEditingController _conformPasswordController = TextEditingController();
 
   @override
@@ -169,7 +186,7 @@ class RegisterPage extends StatelessWidget {
                             const SizedBox(width: 5,),
                       
                             GestureDetector(
-                              onTap: onTap,
+                              onTap: widget.onTap,
                               child: Text(
                                 "Sign In",
                                 style: TextStyle(

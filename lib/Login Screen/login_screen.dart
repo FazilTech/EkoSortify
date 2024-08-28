@@ -1,11 +1,10 @@
 import 'package:eko_sortify_app/Components/my_buttons.dart';
 import 'package:eko_sortify_app/Components/text_field.dart';
-import 'package:eko_sortify_app/Login%20Screen/RegisterPage.dart';
 import 'package:eko_sortify_app/Service/authentication/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({
     super.key,
     required this.onTap
@@ -13,19 +12,34 @@ class LoginScreen extends StatelessWidget {
 
   final void Function() onTap;
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController = TextEditingController();
+
   TextEditingController _passwordController = TextEditingController();
 
   void login(BuildContext context) async{
     final authService = AuthService();
 
+     showDialog(
+      context: context, 
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      );
+
     // try login
     try{
       await authService.signInWithEmailAndPassword(_emailController.text, _passwordController.text);
+      if (mounted) Navigator.pop(context);
     }
 
     //catch errors
     catch(e){
+      if(mounted)Navigator.pop(context);
       showDialog(
         context: context, 
         builder: (context) => AlertDialog(
@@ -148,7 +162,7 @@ class LoginScreen extends StatelessWidget {
                           const SizedBox(width: 5,),
                     
                           GestureDetector(
-                            onTap: onTap,
+                            onTap: widget.onTap,
                             child: Text(
                               "Register Now",
                               style: TextStyle(
@@ -184,7 +198,12 @@ class LoginScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Tab(icon: Image.asset("assets/images/google.png",),),
+              GestureDetector(
+                onTap: ()=> AuthService().signWithGoogle(),
+                child: Tab(
+                  icon: Image.asset("assets/images/google.png",),
+                  ),
+              ),
               Tab(icon: Image.asset("assets/images/microsoft.png")),
               Tab(icon: Image.asset("assets/images/linkedin.jpg")),
               Tab(icon: Image.asset("assets/images/twitter.jpg")),
@@ -194,5 +213,4 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-  
 }
