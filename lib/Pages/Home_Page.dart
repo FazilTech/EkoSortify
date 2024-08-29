@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eko_sortify_app/Components/my_drawer.dart';
 import 'package:eko_sortify_app/Components/text_field.dart';
 import 'package:eko_sortify_app/Components/wall_post.dart';
+import 'package:eko_sortify_app/Pages/chat_page.dart';
 import 'package:eko_sortify_app/Pages/profile_page.dart';
 import 'package:eko_sortify_app/helper/helper_methord.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,6 +55,37 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
   return Scaffold(
+
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+            bottom: 95, 
+            right: 1,
+            child: FloatingActionButton(
+              backgroundColor: Color.fromRGBO(59, 200, 100, 30),
+              foregroundColor: Colors.white,
+              onPressed: (){},
+              child: Icon(Icons.android),
+              ),
+            ),
+
+            Positioned(
+              bottom: 170,
+              right: 1,
+              child: FloatingActionButton(
+                backgroundColor: Color.fromRGBO(59, 200, 100, 30),
+                foregroundColor: Colors.white,
+                onPressed: (){
+                  Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => const Chatpage(),)
+                    );
+                },  
+                child: Icon(Icons.message),
+                )
+              )
+        ],
+      ),
+
       appBar: AppBar(
          
         title: Padding(
