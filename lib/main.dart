@@ -1,4 +1,5 @@
 import 'package:eko_sortify_app/Intro%20Screen/Spalash_Screen.dart';
+import 'package:eko_sortify_app/Service/storage/storage_service.dart';
 import 'package:eko_sortify_app/Theme/theme_provider.dart';
 import 'package:eko_sortify_app/firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +12,13 @@ void main() async{
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider(),),
+        ChangeNotifierProvider(create: ((context) => StorageService()))
+      ],
       child: const MyApp(),
-      ),
-        
+      )    
   );
 }
 

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -26,24 +27,40 @@ class AuthService{
     }
   }
 
-  // googleSignIn 
-  signWithGoogle() async{
-    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+   Future<void> signWithGoogle() async {
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
 
-    // user cancels google sign in pop up screen
-    if(gUser == null) return;
+      // If the user cancels the sign-in process
+      if (gUser == null) return;
 
-    // obtain auth details from request
-    final GoogleSignInAuthentication gAuth = await gUser.authentication;
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication gAuth = await gUser.authentication;
 
-    // create a new creditional for user
-    final Credential = GoogleAuthProvider.credential(
-      accessToken: gAuth.accessToken,
-      idToken: gAuth.idToken,
-    );
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: gAuth.accessToken,
+        idToken: gAuth.idToken,
+      );
 
-    // finally, sign in
-    return await _auth.signInWithCredential(Credential);
+      // Sign in with the credential
+      UserCredential userCredential = await _auth.signInWithCredential(credential);
+
+      // Create a user document in Firestore
+      await createUserDocument(userCredential);
+      
+    } catch (e) {
+      throw Exception("Google Sign-In failed: $e");
+    }
+  }
+
+  // Function to create a user document in Firestore
+  Future<void> createUserDocument(UserCredential userCredential) async {
+    await FirebaseFirestore.instance.collection("Users").doc(userCredential.user!.email).set({
+      'email': userCredential.user!.email,
+      'username': userCredential.user!.displayName ?? 'Anonymous', // Using displayName if available
+    });
   }
 
   //sign out

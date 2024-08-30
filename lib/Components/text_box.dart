@@ -30,14 +30,15 @@ class MyTextBox extends StatelessWidget {
               Text(
                 sectionName,
                 style: TextStyle(
-                  color: Colors.grey[500]
+                  color: Colors.white,
+                  fontSize: 20
                 ),
                 ),
 
               IconButton(
                 onPressed: onPressed, 
                 icon: Icon(Icons.settings),
-                color: Colors.grey[400],
+                color: Theme.of(context).colorScheme.inversePrimary,
                 )
             ],
           ),

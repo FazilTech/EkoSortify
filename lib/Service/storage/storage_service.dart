@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -88,5 +90,32 @@ class StorageService with ChangeNotifier{
     // pick the image
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image == null) return; // user cancelled the picker
+
+    File file = File(image.path);
+
+    try{
+      // define the path in storage
+      String filePath = 'upload_images/${DateTime.now()}.png';
+
+      // upload the file to firebase storage
+      await firebaseStorage.ref(filePath).putFile(file);
+
+      // after uploading fetch the downalod URL
+      String downalodUrl = await firebaseStorage.ref(filePath).getDownloadURL();
+
+      // update the image urls list and UI
+      _imageUrls.add(downalodUrl);
+      notifyListeners();
+    }
+
+    // handle any errors
+    catch(e){
+      print("Error uploading..$e");
+    }finally{
+      _isUploading = false;
+      notifyListeners();
+    }
   }
 }

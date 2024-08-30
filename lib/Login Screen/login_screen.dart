@@ -1,6 +1,7 @@
 import 'package:eko_sortify_app/Components/my_buttons.dart';
 import 'package:eko_sortify_app/Components/text_field.dart';
 import 'package:eko_sortify_app/Service/authentication/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -20,6 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController = TextEditingController();
 
   TextEditingController _passwordController = TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void login(BuildContext context) async{
     final authService = AuthService();
@@ -48,6 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
         );
     }
   }
+  
+
 
   @override
   Widget build(BuildContext context) {
