@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eko_sortify_app/Components/my_buttons.dart';
 import 'package:eko_sortify_app/Components/text_field.dart';
 import 'package:eko_sortify_app/Service/authentication/auth_service.dart';
+import 'package:eko_sortify_app/Service/authentication/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,6 +22,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   void register(BuildContext context) async {
     final _auth = AuthService();
+    final _db = DataBaseService();
 
     showDialog(
       context: context,
@@ -44,7 +46,15 @@ class _RegisterPageState extends State<RegisterPage> {
         // Navigate to another screen after registration
         Navigator.pushReplacementNamed(context, '/home'); // Replace with your target route
 
-      } catch (e) {
+        // once registerd, crease and save user profile in database
+        // await _db.saveUserInfoInFirebase(
+          // name: _emailController.text,
+          // email: _passwordController.text
+          // );
+      
+      } 
+      
+      catch (e) {
         Navigator.pop(context); // Close the progress dialog
         showDialog(
           context: context,
@@ -67,7 +77,8 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> createUserDocument(UserCredential userCredential) async {
     await FirebaseFirestore.instance.collection("Users").doc(userCredential.user!.email).set({
       'email': userCredential.user!.email,
-      'username': userCredential.user!.displayName ?? 'Anonymous',
+      'username': userCredential.user!.displayName ?? 'User',
+      'uid':userCredential.user!.uid,
     });
   }
 

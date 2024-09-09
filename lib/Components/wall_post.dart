@@ -5,6 +5,7 @@ import 'package:eko_sortify_app/Components/delete_button.dart';
 import 'package:eko_sortify_app/Components/like_button.dart';
 import 'package:eko_sortify_app/helper/helper_methord.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -32,12 +33,16 @@ class _WallPostState extends State<WallPost> {
   // User
   final currentUser = FirebaseAuth.instance.currentUser!;
   bool isLiked = false;
+  final userCollection = FirebaseFirestore.instance.collection("Users");
+  final _db = FirebaseFirestore.instance;
 
   // Track whether comments are shown or hidden
   bool areCommentsVisible = false;
 
   // comments text controller
   final _commentTextController = TextEditingController();
+
+  final _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -166,179 +171,234 @@ class _WallPostState extends State<WallPost> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      margin: EdgeInsets.only(top: 25, left: 25, right: 25),
-      padding: EdgeInsets.all(15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Wallpost
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection("Users")
+          .doc(currentUser.email)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final userData = snapshot.data!.data() as Map<String, dynamic>?;
+
+          if (userData == null) {
+            return Center(
+              child: Text(
+                "No user data found.",
+                style: TextStyle(color: Colors.grey[700]),
+              ),
+            );
+          }
+
+          return Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            margin: EdgeInsets.only(top: 25, left: 25, right: 25),
+            padding: EdgeInsets.all(15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Wallpost
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.message,
-                      style: GoogleFonts.sora(
-                        fontSize: 18,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.message,
+                            style: GoogleFonts.sora(
+                              fontSize: 18,
+                            ),
+                            overflow: TextOverflow.ellipsis, // Handle overflow
+                            maxLines: 10, // Limit number of lines
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Text(
+                                widget.user,
+                                style: GoogleFonts.sora(
+                                  color:
+                                      Theme.of(context).colorScheme.inversePrimary,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                " . ",
+                                style: GoogleFonts.sora(
+                                  color:
+                                      Theme.of(context).colorScheme.inversePrimary,
+                                ),
+                              ),
+                              Text(
+                                widget.time,
+                                style: GoogleFonts.sora(
+                                  color:
+                                      Theme.of(context).colorScheme.inversePrimary,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      overflow: TextOverflow.ellipsis, // Handle overflow
-                      maxLines: 3, // Limit number of lines
                     ),
-                    const SizedBox(height: 10),
+                    if (widget.user == currentUser.email)
+                      DeleteButton(onTap: deletePost),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Row(
                       children: [
-                        Text(
-                          widget.user,
-                          style: GoogleFonts.sora(
-                            color: Theme.of(context).colorScheme.inversePrimary,
-                            fontSize: 12,
-                          ),
+                        Column(
+                          children: [
+                            LikeButton(
+                              isLiked: isLiked,
+                              onTap: toggleLikes,
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              widget.likes.length.toString(),
+                              style: GoogleFonts.sora(
+                                color: Theme.of(context).colorScheme.inversePrimary,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          " . ",
-                          style: GoogleFonts.sora(
-                            color: Theme.of(context).colorScheme.inversePrimary,
-                          ),
+                        const SizedBox(width: 20),
+                        Column(
+                          children: [
+                            CommentButton(onTap: showCommentDialog),
+                            const SizedBox(height: 5),
+                            StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection("User Posts")
+                                  .doc(widget.postId)
+                                  .collection("Comments")
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return Text(
+                                    "0",
+                                    style: GoogleFonts.sora(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary,
+                                    ),
+                                  );
+                                }
+
+                                int commentCount = snapshot.data!.docs.length;
+
+                                return Text(
+                                  commentCount.toString(),
+                                  style: GoogleFonts.sora(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                        Text(
-                          widget.time,
-                          style: GoogleFonts.sora(
-                            color: Theme.of(context).colorScheme.inversePrimary,
-                            fontSize: 12,
-                          ),
+                        SizedBox(width: 20),
+                        Column(
+                          children: [
+                            Icon(Icons.send),
+                            const SizedBox(height: 5),
+                            Text(
+                              "*",
+                              style: GoogleFonts.sora(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
+                    ElevatedButton(
+                      onPressed: toggleCommentsVisibility,
+                      child: Text(
+                        areCommentsVisible ? 'Hide Comments' : 'Show Comments',
+                        style: GoogleFonts.sora(),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              if (widget.user == currentUser.email)
-                DeleteButton(onTap: deletePost),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      LikeButton(
-                        isLiked: isLiked,
-                        onTap: toggleLikes,
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        widget.likes.length.toString(),
-                        style: GoogleFonts.sora(
-                          color: Theme.of(context).colorScheme.inversePrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 20),
-                  Column(
-                    children: [
-                      CommentButton(onTap: showCommentDialog),
-                      const SizedBox(height: 5),
-                      StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection("User Posts")
-                            .doc(widget.postId)
-                            .collection("Comments")
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return Text(
-                              "0",
-                              style: GoogleFonts.sora(
-                                color:
-                                    Theme.of(context).colorScheme.inversePrimary,
-                              ),
-                            );
-                          }
+                const SizedBox(height: 20),
+                if (areCommentsVisible)
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("User Posts")
+                        .doc(widget.postId)
+                        .collection("Comments")
+                        .orderBy("CommentTime", descending: true)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
 
-                          int commentCount = snapshot.data!.docs.length;
+                      return ListView(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: snapshot.data!.docs.map((doc) {
+                          final commentData =
+                              doc.data() as Map<String, dynamic>;
 
-                          return Text(
-                            commentCount.toString(),
-                            style: GoogleFonts.sora(
-                              color: Theme.of(context).colorScheme.inversePrimary,
-                            ),
+                          return Comment(
+                            text: commentData["CommentText"],
+                            user: commentData["CommentedBy"],
+                            time: formatDate(commentData["CommentTime"]),
                           );
-                        },
-                      ),
-                    ],
+                        }).toList(),
+                      );
+                    },
                   ),
-                  SizedBox(width: 20),
-                  Column(
-                    children: [
-                      Icon(Icons.send),
-                      const SizedBox(height: 5),
-                      Text(
-                        "*",
-                        style: GoogleFonts.sora(
-                          color: Theme.of(context).colorScheme.inversePrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              ElevatedButton(
-                onPressed: toggleCommentsVisibility,
-                child: Text(
-                  areCommentsVisible ? 'Hide Comments' : 'Show Comments',
-                  style: GoogleFonts.sora(),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          if (areCommentsVisible)
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("User Posts")
-                  .doc(widget.postId)
-                  .collection("Comments")
-                  .orderBy("CommentTime", descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                return ListView(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: snapshot.data!.docs.map((doc) {
-                    final commentData =
-                        doc.data() as Map<String, dynamic>;
-
-                    return Comment(
-                      text: commentData["CommentText"],
-                      user: commentData["CommentedBy"],
-                      time: formatDate(commentData["CommentTime"]),
-                    );
-                  }).toList(),
-                );
-              },
+              ],
             ),
-        ],
-      ),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              "Error: ${snapshot.error}",
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
+  }
+
+  // report user
+  Future<void> reportUserInFirebase(String postId, userId) async{
+    final currentId = _auth.currentUser!.email;
+
+    final report = {
+      'reportedBy': currentUser,
+      'messageId': postId,
+      'messageOwnerId': userId,
+      'timeStamp': FieldValue.serverTimestamp(),
+    };
+
+    // update in firestore
+    await _db.collection("Reports").add(report);
   }
 }

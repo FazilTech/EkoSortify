@@ -7,6 +7,10 @@ class AuthService{
   // instance of auth
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // get current user and uid
+  User? getCurrentUser() => _auth.currentUser;
+  String getCurrentUid() => _auth.currentUser!.uid;
+
   // sign in
   Future<UserCredential> signInWithEmailAndPassword(String email, password) async{
     try{
@@ -59,7 +63,8 @@ class AuthService{
   Future<void> createUserDocument(UserCredential userCredential) async {
     await FirebaseFirestore.instance.collection("Users").doc(userCredential.user!.email).set({
       'email': userCredential.user!.email,
-      'username': userCredential.user!.displayName ?? 'Anonymous', // Using displayName if available
+      'username': userCredential.user!.displayName ?? 'User', // Using displayName if available
+      'uid': userCredential.user!.uid,
     });
   }
 

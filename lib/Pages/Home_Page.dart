@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eko_sortify_app/Components/my_drawer.dart';
 import 'package:eko_sortify_app/Pages/Post_page.dart';
+import 'package:eko_sortify_app/Pages/Sorting%20Button/sorting_page.dart';
 import 'package:eko_sortify_app/Pages/chat_page.dart';
 import 'package:eko_sortify_app/Pages/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,7 +44,9 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               backgroundColor: Color.fromRGBO(59, 200, 100, 30),
               foregroundColor: Colors.white,
-              onPressed: (){},
+              onPressed:  (){
+                
+              },  
               child: Icon(Icons.android),
             ),
           ),
@@ -55,7 +58,7 @@ class _HomePageState extends State<HomePage> {
               foregroundColor: Colors.white,
               onPressed: (){
                 Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => const Chatpage(),)
+                  context, MaterialPageRoute(builder: (context) => ChatPage())
                 );
               },  
               child: Icon(Icons.message),
@@ -140,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                                   child: Text(
                                     "WELCOME,",
                                     style: TextStyle(
-                                      fontSize: 35,
+                                      fontSize: 40,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold
                                     ),
@@ -151,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                                   child: Text(
                                     userData!['username'],
                                     style: GoogleFonts.sora(
-                                      fontSize: 20,
+                                      fontSize: 25,
                                       color: Colors.white
                                     ),
                                   ),
@@ -218,19 +221,22 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 20,),
                   Row(
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(left: 10),
-                        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 60),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.black),
-                        ),
-                        child: Text(
-                          "Sorting",
-                          style: GoogleFonts.sora(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold
+                      GestureDetector(
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SortingPage(),)),
+                        child: Container(
+                          margin: EdgeInsets.only(left: 10),
+                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 60),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.secondary,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.black),
+                          ),
+                          child: Text(
+                            "Sorting",
+                            style: GoogleFonts.sora(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold
+                            ),
                           ),
                         ),
                       ),

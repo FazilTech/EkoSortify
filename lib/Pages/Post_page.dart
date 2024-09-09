@@ -29,6 +29,7 @@ class _PostPageState extends State<PostPage> {
         'UserEmail': currentUser.email,
         'Message': textController.text,
         'TimesStamp': Timestamp.now(),
+        'uid': currentUser.uid, 
         'Likes': [],
         'Comments': []
       });

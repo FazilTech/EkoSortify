@@ -47,6 +47,17 @@ dependencies:
   google_nav_bar: ^5.0.6
   image_picker: ^1.0.2
   firebase_storage: ^11.6.0
+  #flutter_polyline_points: ^1.0.0
+  #dio: ^5.6.0
+  flutter_osm_plugin: ^0.53.4+1
+  flutter_map: ^4.0.0
+  latlong2: ^0.8.2
+  geolocator: ^11.1.0
+  google_maps_flutter: ^2.3.0
+  location: ^5.0.3
+  flutter_polyline_points: ^1.0.0
+  http: ^0.13.5
+  font_awesome_flutter: ^10.4.0
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +93,30 @@ flutter:
     - assets/images/linkedin.jpg
     - assets/images/microsoft.png
     - assets/images/twitter.jpg
+    - assets/images/recycle_center_icon.png
+    
+    - assets/centers/banner_image.jpg
+    - assets/centers/clothing.png
+    - assets/centers/gardening.png
+    - assets/centers/image1.jpeg
+    - assets/centers/image2.webp
+    - assets/centers/kitchen.png
+    - assets/centers/map.png
+    - assets/centers/popular_item1.jpg
+    - assets/centers/popular_item2.jpg
+    - assets/centers/popular_item3.jpg
+    - assets/centers/profile.png
+    
+    - assets/sorting/battery.png
+    - assets/sorting/e-waste.png
+    - assets/sorting/ewaste1.png
+    - assets/sorting/medicine.png
+    - assets/sorting/medicine1.png
+    - assets/sorting/organic.png
+    - assets/sorting/plastic.png
+    - assets/sorting/plastic1.png
+    - assets/sorting/radioactive.png
+    - assets/sorting/recycle.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

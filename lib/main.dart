@@ -1,4 +1,6 @@
 import 'package:eko_sortify_app/Intro%20Screen/Spalash_Screen.dart';
+import 'package:eko_sortify_app/Service/authentication/auth_gate.dart';
+import 'package:eko_sortify_app/Service/authentication/database_provider.dart';
 import 'package:eko_sortify_app/Service/storage/storage_service.dart';
 import 'package:eko_sortify_app/Theme/theme_provider.dart';
 import 'package:eko_sortify_app/firebase_options.dart';
@@ -15,7 +17,8 @@ void main() async{
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeProvider(),),
-        ChangeNotifierProvider(create: ((context) => StorageService()))
+        ChangeNotifierProvider(create: (context) => StorageService()),
+        ChangeNotifierProvider(create: (context) => DatabaseProvider())
       ],
       child: const MyApp(),
       )    

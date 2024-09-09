@@ -1,9 +1,10 @@
 import 'package:eko_sortify_app/Components/bottom_nav_bar.dart';
 import 'package:eko_sortify_app/Pages/Home_Page.dart';
 import 'package:eko_sortify_app/Pages/centers_page.dart';
-import 'package:eko_sortify_app/Pages/location_page.dart';
+import 'package:eko_sortify_app/Pages/locations.dart';
 import 'package:eko_sortify_app/Pages/profile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:eko_sortify_app/Pages/locations_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -25,7 +26,7 @@ class _HomeState extends State<Home> {
   final List<Widget> _pages = [
     const HomePage(),
     const LocationPage(),
-    const CentersPage(),
+    CentersPage(),
     const ProfilePage() 
   ];
 

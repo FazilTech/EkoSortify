@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eko_sortify_app/Pages/Home.dart';
 import 'package:eko_sortify_app/Pages/profile_edit_page.dart';
+import 'package:eko_sortify_app/Service/authentication/auth_service.dart';
+import 'package:eko_sortify_app/Service/authentication/database_provider.dart';
+import 'package:eko_sortify_app/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -13,7 +17,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // User
+
+  //User
   final currentUser = FirebaseAuth.instance.currentUser!;
   
   // Firestore collection reference
