@@ -91,7 +91,8 @@ class _HomePageState extends State<HomePage> {
 
   // Function to upload the image to your backend
   Future<String?> _uploadImage(File image) async {
-    final uri = Uri.parse('http://127.0.0.1:5000/detect-bottles'); // Replace with your backend URL
+    // Replace with your actual backend IP (Flask app running on a server or in the cloud)
+    final uri = Uri.parse('http://192.168.116.132:5000/detect'); 
     final request = http.MultipartRequest('POST', uri);
 
     request.files.add(await http.MultipartFile.fromPath('image', image.path));
@@ -103,8 +104,7 @@ class _HomePageState extends State<HomePage> {
         final responseBody = await response.stream.bytesToString();
         print('Response Body: $responseBody');
         final data = jsonDecode(responseBody);
-        // Ensure the backend returns a 'result' field
-        return data['result'] ?? 'No result found';
+        return data['bottle_detected'] == true ? 'Bottle Detected' : 'No Bottle Detected';
       } else {
         print('Failed to upload image. Status Code: ${response.statusCode}');
         return 'Failed to upload image';
