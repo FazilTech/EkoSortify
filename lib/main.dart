@@ -1,5 +1,5 @@
+import 'package:camera/camera.dart';
 import 'package:eko_sortify_app/Intro%20Screen/Spalash_Screen.dart';
-import 'package:eko_sortify_app/Service/authentication/auth_gate.dart';
 import 'package:eko_sortify_app/Service/authentication/database_provider.dart';
 import 'package:eko_sortify_app/Service/storage/storage_service.dart';
 import 'package:eko_sortify_app/Theme/theme_provider.dart';
@@ -9,8 +9,10 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 // flutter pub add provider --> Provider
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
